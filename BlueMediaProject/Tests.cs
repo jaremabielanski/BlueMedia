@@ -9,56 +9,15 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
+
+
 namespace BlueMediaProject
 {
+
     class Tests
     {
 
-        IWebDriver blueDriver = new ChromeDriver();
-        IWebElement element;
-        SelectElement selectElement;
-
-        static void Main(string[] args)
-        {
-        }
-
-        [Test]
-        public void ContactFormTest()
-        {
-            
-            Console.WriteLine("Test execution phase");
-
-            element = blueDriver.FindElement(By.XPath(".//form/div/div/label/div/input[@data-request-data='id:1,post_id:370']"));
-            element.Click();
-
-            WebDriverWait wait = new WebDriverWait(blueDriver, TimeSpan.FromSeconds(5));
-            wait.Until(blueDriver => blueDriver.FindElement(By.Id("name")));
-            blueDriver.FindElement(By.Id("name")).SendKeys("BlueServices Test");
-
-            element = blueDriver.FindElement(By.Id("email_c"));
-            element.SendKeys("bs@blueservices.pl");
-
-            element = blueDriver.FindElement(By.Id("company_name"));
-            element.SendKeys("BlueServices Company");
-
-            element = blueDriver.FindElement(By.Id("phone"));
-            element.SendKeys("+48 123 123 123");
-            
-            element = blueDriver.FindElement(By.Id("select2-subject-container"));
-            element.Click();
-            element = blueDriver.FindElement(By.ClassName("select2-search__field"));
-            element.SendKeys("Przelewy natychmiastowe"+Keys.Enter);
-
-            element = blueDriver.FindElement(By.Id("body"));
-            element.SendKeys("automat test Blueservices");
-
-            element = blueDriver.FindElement(By.XPath(".//*[@id='result']/div/div/div/label/div/input[@value='email']"));
-            element.Click();
-
-            element = blueDriver.FindElement(By.Name("agreement_1"));
-            element.Click();
-
-        }
+        static void Main(string[] args) {}
 
         [SetUp]
         public void TestPreparation()
@@ -66,8 +25,35 @@ namespace BlueMediaProject
 
             Console.WriteLine("Test preparation phase");
 
-            blueDriver.Navigate().GoToUrl("https://bluemedia.pl/kontakt");
-            blueDriver.Manage().Window.Maximize();
+            BrowserDriver.Driver = new ChromeDriver();
+            BrowserDriver.Driver.Navigate().GoToUrl("https://bluemedia.pl/kontakt");
+            BrowserDriver.Driver.Manage().Window.Maximize();
+
+        }
+
+        [Test]
+        public void ContactFormTest()
+        {
+
+            PageObjects pageObjects = new PageObjects();
+            PageOperations pageOperations = new PageOperations();
+
+            Console.WriteLine("Test execution phase");
+
+            pageOperations.ClickOnElement(pageObjects.ClientTypeRadioButton);
+
+            WebDriverWait wait = new WebDriverWait(BrowserDriver.Driver, TimeSpan.FromSeconds(3));
+            wait.Until(blueDriver => BrowserDriver.Driver.FindElement(By.Id("name")));
+
+            pageOperations.EnterString(pageObjects.Name,            "BlueServices Test");
+            pageOperations.EnterString(pageObjects.Email,           "bs@blueservices.pl");
+            pageOperations.EnterString(pageObjects.CompanyName,     "BlueServices Company");
+            pageOperations.EnterString(pageObjects.Phone,           "+48 123 123 123");
+            pageOperations.ClickOnElement(pageObjects.DropDownMenu);
+            pageOperations.EnterString(pageObjects.DropDownSearch,  "Przelewy natychmiastowe" + Keys.Enter);
+            pageOperations.EnterString(pageObjects.Message,         "automat test Blueservices");
+            pageOperations.ClickOnElement(pageObjects.ResponseType);
+            pageOperations.ClickOnElement(pageObjects.Agreement);
 
         }
 
